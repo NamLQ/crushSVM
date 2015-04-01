@@ -1,0 +1,2 @@
+PKG_CXXFLAGS=@CXXFLAGS@ -I. -lboost_filesystem -lboost_serialization -fPIC
+PKG_LIBS=@LDFLAGS@ 

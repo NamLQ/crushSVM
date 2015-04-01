@@ -2,10 +2,9 @@
 /*!
  *
  *
- * \brief       A class keeping all global parameters.
+ * \brief       Shark SVM config
  *
- * \par  
- * This is basically a singleton, as it will only be called via boost::serialization::singleton.
+ *
  *
  * \author      Aydin Demircioglu
  * \date        2014
@@ -33,8 +32,36 @@
  */
 //===========================================================================
 
+#ifndef SHARK_SHARKSVMCONFIG_H
+#define SHARK_SHARKSVMCONFIG_H
 
-#ifndef SHARK_GLOBALPARAMETERS_H
-#define SHARK_GLOBALPARAMETERS_H
+#define SHARKSVM_VERSION_PATCH 0
+#define SHARKSVM_VERSION_MINOR 2
+#define SHARKSVM_VERSION_MAJOR 0
+#define SHARKSVM_BUILD_TYPE "Release"
+
+// need to fake boost log as it is not available on LIDO for now
+#define REPLACE_BOOST_LOG
+#ifdef REPLACE_BOOST_LOG
+#define localstr(s) #s
+#define BOOST_LOG_TRIVIAL_FULL(x)    std::cout << std::endl << "(" << localstr(x) << "): "
+#define BOOST_LOG_TRIVIAL(x)    std::cout << std::endl << ": "
+#endif
+
+// if we need not replace boost, we can include it
+#ifndef REPLACE_BOOST_LOG
+#include <boost/log/core.hpp>
+#include <boost/log/expressions.hpp>
+#include <boost/log/trivial.hpp>
+#include <boost/log/utility/setup/console.hpp>
+#endif
+
+
+// WTF??
+#define BOOST_SPIRIT_USE_PHOENIX_V3
+
+namespace shark {
+}
+
 
 #endif
