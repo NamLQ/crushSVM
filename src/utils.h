@@ -54,22 +54,23 @@ void generateFromR (Rcpp::NumericMatrix &xR, Rcpp::NumericVector &yR, shark::Cla
 
 void generateFromShark (const shark::ClassificationDataset  &dataset, Rcpp::NumericMatrix &xR, Rcpp::NumericVector &yR) 
 {
+	// labels
 	std::vector<unsigned int> tmpV (dataset.labels().numberOfElements());
 	std::copy (dataset.labels().elements().begin(), dataset.labels().elements().end(), tmpV.begin());
 	yR = wrap(tmpV);
 
-	// 	// probably stupid, but for now its ok
-// 	unsigned int examples = xR.rows();
-// 	std::vector<RealVector> inputs;
-// 	for (size_t e = 0; e < examples; e++) {
-// 		NumericMatrix::Row zzrow = xR( e, _);
-// 		std::vector<double> tmp (zzrow.begin(), zzrow.end());
-// 		RealVector tmpRV (tmp.size());
-// 		std::copy (tmp.begin(), tmp.end(), tmpRV.begin());
-// 		inputs.push_back(tmpRV);
-// 	}
-// 	std::vector<unsigned int> labels(yR.begin(),yR.end());
-// 	ClassificationDataset data = createLabeledDataFromRange(inputs, labels);
+	// inputs
+	size_t rows = dataset.inputs().numberOfElements();
+	size_t cols = dataset.inputs().element(0).size();
+	
+	// do not know why i need this, but heck.
+	Rcpp:NumericMatrix P (rows, cols);
+	xR = P;
+
+	for (size_t e = 0; e < rows; e++) {
+		RealVector currentRow = dataset.inputs().element(e);
+		std::copy(currentRow.begin(), currentRow.end(), xR.row(e).begin());
+	}
 }
 
 
