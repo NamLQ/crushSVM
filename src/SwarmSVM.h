@@ -18,8 +18,8 @@
 // Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 // MA 02111-1307, USA
 
-#ifndef rshark_hpp
-#define rshark_hpp
+#ifndef SwarmSVM_h
+#define SwarmSVM_h
 
 // FIXME: remove this later on
 // need to fake boost log as it is not available on LIDO for now
