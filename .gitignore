@@ -34,3 +34,4 @@ src/*.so
 SVMBr*tar.gz
 *.Rcheck
 webpage/**
+tmp/*

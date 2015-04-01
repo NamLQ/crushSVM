@@ -17,4 +17,6 @@
 # 08/15 svm
 #	s = ssvm (x, y, gamma = 0.585568587668891, epsilon = 1e-6)
 
-	
+	writeSparseData (x,y, filename = "./tmp/testOutput.sparse")
+	e = readSparseData (filename = "./tmp/testOutput.sparse", normalizeLabels = FALSE, verbose = TRUE)
+	print (head(e))

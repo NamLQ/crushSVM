@@ -55,8 +55,6 @@ RcppExport SEXP BSGDWrapper(SEXP Xs, SEXP Ys, SEXP svmParameters) {
 		
 		// convert data
 		if (verbose) std::cout << "Converting data.. " << std::endl;
-		std::vector<RealVector> inputs;
-
 		if (verbose == true) {
 			std::cout << "Parameters:\n";
 			std::cout<<"\tC: \t\t" << C << "\n";
@@ -66,16 +64,15 @@ RcppExport SEXP BSGDWrapper(SEXP Xs, SEXP Ys, SEXP svmParameters) {
 		}
 		// probably stupid, but for now its ok
 		unsigned int examples = xR.rows();
-		for (size_t e = 0; e < examples; e++) {
+		std::vector<RealVector> inputs;
+				for (size_t e = 0; e < examples; e++) {
 			NumericMatrix::Row zzrow = xR( e, _);
 			std::vector<double> tmp (zzrow.begin(), zzrow.end());
 			RealVector tmpRV (tmp.size());
 			std::copy (tmp.begin(), tmp.end(), tmpRV.begin());
 			inputs.push_back(tmpRV);
 		}
-
 		std::vector<unsigned int> labels(yR.begin(),yR.end());
-		
 		ClassificationDataset trainingData = createLabeledDataFromRange(inputs, labels);
 		
 		// define things	

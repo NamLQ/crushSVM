@@ -26,6 +26,7 @@
 #include <shark/Data/DataDistribution.h> //includes small toy distributions
 
 #include "SwarmSVM.h"
+#include "utils.h"
 #include "Data/SparseData.h"
 
 using namespace std;
@@ -42,7 +43,6 @@ RcppExport SEXP  readSparseData(SEXP svmParameters) {
 	std::cout << "Starting.. " << std::endl;
 	try {
         Rcpp::List rparam(svmParameters);
-        double C = Rcpp::as<double>(rparam["C"]);
 		std::string filename = Rcpp::as<std::string>(rparam["filename"]);
 		bool normalizeLabels = Rcpp::as<bool>(rparam["normalizeLabels"]);
 		bool verbose = Rcpp::as<bool>(rparam["verbose"]);
@@ -61,26 +61,12 @@ RcppExport SEXP  readSparseData(SEXP svmParameters) {
 		
 		Rcpp::NumericMatrix xR = Rcpp::NumericMatrix();
 		Rcpp::NumericVector yR = Rcpp::NumericVector();
+		generateFromShark (sdata, xR, yR) ;
 		
-// 		// probably stupid, but for now its ok
-// 		unsigned int examples = xR.rows();
-// 		for (size_t e = 0; e < examples; e++) {
-// 			NumericMatrix::Row zzrow = xR( e, _);
-// 			std::vector<double> tmp (zzrow.begin(), zzrow.end());
-// 			RealVector tmpRV (tmp.size());
-// 			std::copy (tmp.begin(), tmp.end(), tmpRV.begin());
-// 			inputs.push_back(tmpRV);
-// 		}
-// 
-// 		std::vector<unsigned int> labels(yR.begin(),yR.end());
-// 		
-// 		ClassificationDataset trainingData = createLabeledDataFromRange(inputs, labels);
 		Rcpp::List rl = R_NilValue;
-		rl = Rcpp::List::create();
-// 			Rcpp::Named("error") = trainError,
-//         		Rcpp::Named("offset") = offset,
-//         		Rcpp::Named("nSV") = nSV,
-//         		Rcpp::Named("alpha") = alpha);
+		rl = Rcpp::List::create(
+				Rcpp::Named("x") = xR,
+         		Rcpp::Named("y") = yR);
 		cout << "returning list:\t" << endl;
 		return rl;
 
@@ -96,4 +82,43 @@ RcppExport SEXP  readSparseData(SEXP svmParameters) {
 	return R_NilValue;
 }
 
+
+
+RcppExport SEXP writeSparseData(SEXP Xs, SEXP Ys, SEXP svmParameters) {
+		
+	std::cout << "Starting.. " << std::endl;
+	try {
+		Rcpp::NumericMatrix xR = Rcpp::NumericMatrix(Xs);
+		Rcpp::NumericVector yR = Rcpp::NumericVector(Ys);
+			
+		Rcpp::List rparam(svmParameters);
+		std::string filename = Rcpp::as<std::string>(rparam["filename"]);
+		bool verbose = Rcpp::as<bool>(rparam["verbose"]);
+		
+		// convert to dataset
+		ClassificationDataset sparseData;
+		generateFromR (xR, yR, sparseData);
+	
+		if (verbose) std::cout << "Writing sparse data to " << filename <<  std::endl;
+		
+		SparseDataModel<RealVector> sdm;
+		sdm.exportData (sparseData, filename);
+		
+		Rcpp::List rl = R_NilValue;
+		rl = Rcpp::List::create();
+
+		cout << "returning list:\t" << endl;
+		return rl;
+		
+	} catch(std::exception &ex) {
+		cout << "oops:\t" << endl;
+		forward_exception_to_r(ex);
+	} catch(...) {
+		cout << "oops:\t" << endl;
+		::Rf_error("c++ exception (unknown reason)");
+	}
+	
+	cout << "nothing:\t" << endl;
+	return R_NilValue;
+}
 
