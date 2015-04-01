@@ -1,0 +1,71 @@
+
+eine art von pipelines.
+
+
+bagging:
+    dataset -> dataset 
+    train svm
+    
+double bagging
+    
+
+boosting
+    adaboost 
+    
+stacking
+
+mixture of experts
+    hierarchical mixture of experts
+    
+
+
+compute bias (ensemble)
+compute variance (ensemble)
+
+
+
+vote combining:
+    
+    
+    
+local learning:
+    
+
+    
+    
+too many different models,
+so do not have the general one model file
+but have as always some kind of magic bytes
+and then whatever is needed for that format.
+
+# swarmsvm.nystrom
+...
+...
+...
+
+
+# swarmsvm.dtsvm
+
+
+etc.
+
+
+workflow/pipelines from ensemblesvm.
+copy or mimic.
+
+
+file can have multiple models
+
+# swarmsvm.ensemble
+# -- fold 1/5
+LIBSVM model
+# -- aggregate
+LIBSVM model
+
+
+frage wie man die einzelnen modelle vorhaelt
+um nachher die wieder zu laden.
+swarmsvm.
+
+
+
