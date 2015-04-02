@@ -37,14 +37,11 @@ using namespace Rcpp;
 
 void generateFromR (Rcpp::NumericMatrix &xR, Rcpp::NumericVector &yR, shark::ClassificationDataset &data) 
 {
-	// probably stupid, but for now its ok
 	unsigned int examples = xR.rows();
 	std::vector<RealVector> inputs;
 	for (size_t e = 0; e < examples; e++) {
-		NumericMatrix::Row zzrow = xR( e, _);
-		std::vector<double> tmp (zzrow.begin(), zzrow.end());
-		RealVector tmpRV (tmp.size());
-		std::copy (tmp.begin(), tmp.end(), tmpRV.begin());
+		RealVector tmpRV (xR.cols());
+		std::copy (xR.row(e).begin(), xR.row(e).end(), tmpRV.begin());
 		inputs.push_back(tmpRV);
 	}
 	std::vector<unsigned int> labels(yR.begin(),yR.end());
@@ -63,7 +60,7 @@ void generateFromShark (const shark::ClassificationDataset  &dataset, Rcpp::Nume
 	size_t rows = dataset.inputs().numberOfElements();
 	size_t cols = dataset.inputs().element(0).size();
 	
-	// do not know why i need this, but heck.
+	// do not know why i need to copy this, but heck.
 	Rcpp:NumericMatrix P (rows, cols);
 	xR = P;
 
