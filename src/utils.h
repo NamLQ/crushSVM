@@ -24,8 +24,9 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <shark/Data/DataDistribution.h> //includes small toy distributions
 #include <Rcpp.h>
+#include <shark/Data/DataDistribution.h> //includes small toy distributions
+#include <shark/Data/WeightedDataset.h> //includes small toy distributions
 
 
 using namespace shark;
@@ -35,7 +36,7 @@ using namespace Rcpp;
 // convert to dataset
 // const would be nice, but i get errors then.
 
-void generateFromR (Rcpp::NumericMatrix &xR, Rcpp::NumericVector &yR, shark::ClassificationDataset &data) 
+static void generateDatasetFromR (Rcpp::NumericMatrix &xR, Rcpp::NumericVector &yR, shark::ClassificationDataset &data) 
 {
 	unsigned int examples = xR.rows();
 	std::vector<RealVector> inputs;
@@ -49,7 +50,23 @@ void generateFromR (Rcpp::NumericMatrix &xR, Rcpp::NumericVector &yR, shark::Cla
 }
 
 
-void generateFromShark (const shark::ClassificationDataset  &dataset, Rcpp::NumericMatrix &xR, Rcpp::NumericVector &yR) 
+static void generateWeightedDatasetFromR (Rcpp::NumericMatrix &xR, Rcpp::NumericVector &yR, Rcpp::NumericVector &wR, shark::WeightedLabeledData<RealVector, unsigned int> &data) 
+{
+	unsigned int examples = xR.rows();
+	std::vector<RealVector> inputs;
+	for (size_t e = 0; e < examples; e++) {
+		RealVector tmpRV (xR.cols());
+		std::copy (xR.row(e).begin(), xR.row(e).end(), tmpRV.begin());
+		inputs.push_back(tmpRV);
+	}
+	std::vector<unsigned int> labels(yR.begin(),yR.end());
+	std::vector<double> weights(wR.begin(), wR.end());
+	data = createLabeledDataFromRange(inputs, labels, weights);
+}    
+
+
+
+static void generateFromShark (const shark::ClassificationDataset  &dataset, Rcpp::NumericMatrix &xR, Rcpp::NumericVector &yR) 
 {
 	// labels
 	std::vector<unsigned int> tmpV (dataset.labels().numberOfElements());

@@ -97,7 +97,7 @@ RcppExport SEXP writeSparseData(SEXP Xs, SEXP Ys, SEXP svmParameters) {
 		
 		// convert to dataset
 		ClassificationDataset sparseData;
-		generateFromR (xR, yR, sparseData);
+		generateDatasetFromR (xR, yR, sparseData);
 	
 		if (verbose) std::cout << "Writing sparse data to " << filename <<  std::endl;
 		

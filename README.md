@@ -12,7 +12,13 @@ with sparse matrixes currently.
 
 The following SVMs are (more or less complete) implemented in SwarmSVM:
 
--Budgeted SVM
+-Instance weighted C-SVM
+-Budgeted SGD
+-Support Cluster Machine
+-Hierarchical Support Cluster Machine
+-Divide-and-Conquer SVM
+-Clustered SVM
+
 
 
 ### Status

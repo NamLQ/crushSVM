@@ -21,6 +21,9 @@
 // MA 02111-1307, USA
 
 #include <Rcpp.h>
+
+#include "utils.h"
+
 #include <shark/Algorithms/Trainers/CSvmTrainer.h> // the C-SVM trainer
 #include <shark/Models/Kernels/GaussianRbfKernel.h> //the used kernel for the SVM
 #include <shark/ObjectiveFunctions/Loss/ZeroOneLoss.h> //used for evaluation of the classifier
@@ -32,13 +35,13 @@ using namespace shark;
 
 
 
-double R_Epsilon_SVM(
+double CSVM(
 	KernelClassifier<RealVector> &kc,
 	double C, 
 	GaussianRbfKernel<> *kernel,
 	bool bias,
 	double epsilon, 
-	const ClassificationDataset &training,
+	const shark::WeightedLabeledData<RealVector, unsigned int> &training,
 	double cacheSize = 0x1000000
 	) {
 	std::cout << training << "\n";
@@ -74,13 +77,10 @@ SVM R_GaussianProcess(SVM svm, Array<double> x, Array<double> y) {
 
 using namespace Rcpp;
 
-RcppExport SEXP SVMregression(SEXP Xs, SEXP Ys, SEXP svmParameters) {
+RcppExport SEXP SVMWrapper(SEXP Xs, SEXP Ys, SEXP Ws, SEXP svmParameters) {
 
-	std::cout << "Starting.. " << std::endl;
 	try {
-		Rcpp::NumericMatrix xR = Rcpp::NumericMatrix(Xs);
-        Rcpp::NumericVector yR = Rcpp::NumericVector(Ys);
-        Rcpp::List rparam(svmParameters);
+		Rcpp::List rparam(svmParameters);
         double C = Rcpp::as<double>(rparam["C"]);
         double epsilon = Rcpp::as<double>(rparam["epsilon"]);
         double gamma = Rcpp::as<double>(rparam["gamma"]); 
@@ -88,6 +88,25 @@ RcppExport SEXP SVMregression(SEXP Xs, SEXP Ys, SEXP svmParameters) {
         string type = Rcpp::as<string>(rparam["type"]);
         string kernel = Rcpp::as<string>(rparam["kernel"]);
 		bool verbose = Rcpp::as<bool>(rparam["verbose"]);
+	
+
+		Rcpp::NumericMatrix xR = Rcpp::NumericMatrix(Xs);
+		Rcpp::NumericVector yR = Rcpp::NumericVector(Ys);
+		Rcpp::NumericVector wR;
+		if (Ws == R_NilValue) {
+			if (verbose) std::cout << "No weights.\n";
+			std::vector<double> weights(yR.size(), 1.0);
+			Rcpp:NumericVector c = wrap(weights);
+			wR = c;
+		} else {
+			wR = Rcpp::NumericVector(Ws);
+		}
+		
+		
+		// get weights.
+		shark::WeightedLabeledData<RealVector, unsigned int> wdata;
+		generateWeightedDatasetFromR  (xR, yR, wR, wdata) ;
+		
 		
 		// convert data
 		if (verbose) std::cout << "Converting data.. " << std::endl;
@@ -99,31 +118,17 @@ RcppExport SEXP SVMregression(SEXP Xs, SEXP Ys, SEXP svmParameters) {
 			std::cout<<"\tgamma: \t\t" << gamma << "\n";
 			std::cout<<"\teps: \t\t" << epsilon << "\n";
 		}
-		// probably stupid, but for now its ok
-		unsigned int examples = xR.rows();
-		for (size_t e = 0; e < examples; e++) {
-			NumericMatrix::Row zzrow = xR( e, _);
-			std::vector<double> tmp (zzrow.begin(), zzrow.end());
-			RealVector tmpRV (tmp.size());
-			std::copy (tmp.begin(), tmp.end(), tmpRV.begin());
-			inputs.push_back(tmpRV);
-		}
 
-		std::vector<unsigned int> labels(yR.begin(),yR.end());
-		
-		ClassificationDataset trainingData = createLabeledDataFromRange(inputs, labels);
 		
 			
 		// define things	
 		KernelClassifier<RealVector> kc;
 		GaussianRbfKernel<> sharkkernel(gamma);
 
-		type=="Epsilon_SVM";
-		
 		double trainError ;
-		if(type=="Epsilon_SVM") {
+		if(type=="CSVM") {
 			bool useBias = true;
-            trainError = R_Epsilon_SVM(kc, C, &sharkkernel, useBias, epsilon, trainingData);
+            trainError = CSVM (kc, C, &sharkkernel, useBias, epsilon, wdata);
         } else {
         	return R_NilValue;
         }

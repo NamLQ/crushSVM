@@ -18,30 +18,33 @@
 ## Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 ## MA 02111-1307, USA
 
-ssvm <- function(x, y = NULL, scaled = TRUE,
-                 type = "Epsilon_SVM", # GaussianProcess
-                 kernel ="rbfdot", verbose = TRUE,
-                 kpar = "automatic", C = 1, nu = 0.2, epsilon = 0.001, gamma=1,
-                 prob.model = FALSE, class.weights = NULL, cross = 0, fit = TRUE,
-                 cache = 40, tol = 0.001, shrinking = TRUE, sigma=1, ...,
-                 subset, na.action = na.omit)
+sharksvm <- function(x, y = NULL, 
+				weights = NULL,
+				scaled = TRUE,
+				type = "CSVM", # GaussianProcess
+				kernel ="rbfdot", verbose = FALSE,
+				kpar = "automatic", C = 1, nu = 0.2, epsilon = 0.001, gamma=1,
+				prob.model = FALSE, class.weights = NULL, cross = 0, fit = TRUE,
+				cache = 40, tol = 0.001, shrinking = TRUE, sigma=1, ...,
+				subset, 
+				na.action = na.omit)
 {
     type <- match.arg(type)
 
-    val <- .Call("SVMregression",
-                 X=x, y=y,
-                 list(C=C,
-                      gamma=gamma,
-                      epsilon=epsilon,
-                      sigma=sigma,
-                      type=type,
-                      kernel=kernel,
-                      verbose = verbose
-                      ),
-                 PACKAGE="SharkSVM")
-    print("Finished..")
-    class(val) <- c("swam.svm")
-    val
+    val <- .Call("SVMWrapper",
+				X=x, y=y,
+				weights = weights,
+				list(C=C,
+						gamma=gamma,
+						epsilon=epsilon,
+						sigma=sigma,
+						type=type,
+						kernel=kernel,
+						verbose = verbose),
+				PACKAGE="SwarmSVM")
+	print("Finished..")
+	class(val) <- c("swarm.csvm")
+	val
 }
 
 
