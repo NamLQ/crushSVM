@@ -12,12 +12,12 @@ with sparse matrixes currently.
 
 The following SVMs are (more or less complete) implemented in SwarmSVM:
 
--Instance weighted C-SVM
--Budgeted SGD
--Support Cluster Machine
--Hierarchical Support Cluster Machine
--Divide-and-Conquer SVM
--Clustered SVM
+- Instance weighted C-SVM
+- Budgeted SGD
+- Support Cluster Machine
+- Hierarchical Support Cluster Machine
+- Divide-and-Conquer SVM
+- Clustered SVM
 
 
 
@@ -31,10 +31,8 @@ It is in pre-alpha status and will stay there for quite a while.
 The package can be loaded by 
 
 > library(devtools)
-
-> load_all(".")
-
-> ssvm(x, y, gamma = 0.5, C = 1.0, epsilon = 1e-7)
+load_all(".")
+sharksvm((x, y, gamma = 0.5, C = 1.0, epsilon = 1e-7)
 
 The data has  to be binary, with 0-1 labels. There is no check for that currently.
 Obviously the whole thing might have many bugs, for now it seems to work with my setup.
@@ -77,9 +75,7 @@ Aydin Demircioglu
 
 ### Credits
 
--SwarmSVM was forked from the very old rShark project https://github.com/eddelbuettel/rshark
-The whole package structure has been developed by 
-Shane Conway and Dirk Eddelbuettel. 
+-SwarmSVM was forked from the very old rShark project https://github.com/eddelbuettel/rshark. The whole package structure has been developed by Shane Conway and Dirk Eddelbuettel. 
 
 
 ### License

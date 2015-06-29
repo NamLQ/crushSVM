@@ -1,13 +1,3 @@
-import("Rcpp")
-useDynLib(SwarmSVM)
-
-exportPattern("*.default")
-
-export(
-       "ssvm",
-       "bsgd"
-       )
-
-#S3method("plot", "svm")
-#S3method("print", "svm")
-#S3method("summary", "svm")
+useDynLib(swarmsvm)
+importFrom(Rcpp, evalCpp)
+exportPattern("^[[:alpha:]]+")

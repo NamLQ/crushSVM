@@ -1,12 +1,11 @@
-Package: SwarmSVM
-Title: A simple library for multiple Support Vector Machine variants
-Version: 0.0.1
-Date: 2015-04-01
-Maintainer: Aydin Demircioglu <aydin.demircioglu@ini.rub.de>
-Author: Aydin Demircioglu <aydin.demircioglu@ini.rub.de
-Description: This is a collection of different implementations of recent SVM solvers. It builds heavily on the power of the Shark Library.
-Depends: R (>= 2.10.0), Rcpp (>= 0.8.2.12)
-LinkingTo: Rcpp
-SystemRequirements: Shark library (>= 3.0.0) from http://shark-project.sourceforge.net/.
-License: GPL (>= 3)
-URL: https://github.com/aydindemircioglu/SwarmSVM
+Package: swarmsvm
+Type: Package
+Title: What the package does (short line)
+Version: 1.0
+Date: 2015-05-11
+Author: Who wrote it
+Maintainer: Who to complain to <yourfault@somewhere.net>
+Description: More about what it does (maybe more than one line)
+License: What license is it under?
+Imports: Rcpp (>= 0.11.6)
+LinkingTo: Rcpp, RcppArmadillo

@@ -26,26 +26,40 @@
 	posEx = as.data.frame(subset(x, y == 1))
 	negEx = as.data.frame(subset(x, y == 0))
 	
+	clusterMethod = "KMeans"
+	
+	if (clusterMethod == "KMeans") {
 
-# cluster pos ex
-	cluster.task = makeClusterTask(data = posEx)
-	cluster.lrn = makeLearner("cluster.SimpleKMeans", N = Kpos)
-	clusterModelPos = train(cluster.lrn, task = cluster.task)
-	clusteringPos = predict(clusterModelPos, newdata=posEx)
+	# cluster pos ex
+		cluster.task = makeClusterTask(data = posEx)
+		cluster.lrn = makeLearner("cluster.SimpleKMeans", N = Kpos)
+		clusterModelPos = train(cluster.lrn, task = cluster.task)
+		clusteringPos = predict(clusterModelPos, newdata=posEx)
 
-# cluster neg ex
-	cluster.task = makeClusterTask(data = negEx)
-	cluster.lrn = makeLearner("cluster.SimpleKMeans", N = Kneg)
-	clusterModelNeg = train(cluster.lrn, task = cluster.task)
-	clusteringNeg = predict(clusterModelNeg, newdata=negEx)
+	# cluster neg ex
+		cluster.task = makeClusterTask(data = negEx)
+		cluster.lrn = makeLearner("cluster.SimpleKMeans", N = Kneg)
+		clusterModelNeg = train(cluster.lrn, task = cluster.task)
+		clusteringNeg = predict(clusterModelNeg, newdata=negEx)
+	} 
 	
-# now for each do X
-	#clusteringNeg$data
+	if (clusterMethod == "EM") {
+	# now for each do X
+		#clusteringNeg$data
+		
+		# em clustering in mlr
+	#	cluster.task = makeClusterTask(data = negEx)
+		#cluster.lrn = makeLearner("cluster.EM", N = Kneg)
+
+	}
+
+	# compute the kernel
+	K = ..
 	
-	# em clustering in mlr
-#	cluster.task = makeClusterTask(data = negEx)
-	#cluster.lrn = makeLearner("cluster.EM", N = Kneg)
+	# compute the weights, this depends on the clustering
+	weights = ...
 	
-	weights = 
-	sharksvm (x, y, weights = weights, type = "CSVM", verbose = TRUE, C = 1, gamma = 1)
+	# call SVM
+	sharksvm (x, y, weights = weights, type = "CSVM", kernel = "precomputed", kernelmatrix = K, verbose = TRUE, C = 1, gamma = 1)
+
 	
