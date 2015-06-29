@@ -1,16 +1,12 @@
-## SwarmSVM
+## CrushSVM
 
-SwarmSVM is a simple library for multiple (binary) Support Vector Machine variants like
-DC-SVM, Support Cluster Machines etc. For efficiency reasons, SwarmSVM builds on
-the [Shark C++ machine learning library](http://image.diku.dk/shark/sphinx_pages/build/html/index.html).
-
-SwarmSVM does read LIBSVM/SVMLight sparse file format, but does not work internally
-with sparse matrixes currently.
+CrushSVM is a simple library for several (binary) Support Vector Machine variants like
+DC-SVM, Support Cluster Machines etc. 
 
 
 ### Features
 
-The following SVMs are (more or less complete) implemented in SwarmSVM:
+The following SVMs are (more or less complete) implemented in CrushSVM:
 
 - Instance weighted C-SVM
 - Budgeted SGD
@@ -32,7 +28,7 @@ The package can be loaded by
 
 > library(devtools)
 load_all(".")
-sharksvm((x, y, gamma = 0.5, C = 1.0, epsilon = 1e-7)
+cpsp((x, y, gamma = 0.5, C = 1.0, epsilon = 1e-7)
 
 The data has  to be binary, with 0-1 labels. There is no check for that currently.
 Obviously the whole thing might have many bugs, for now it seems to work with my setup.
@@ -40,7 +36,7 @@ Obviously the whole thing might have many bugs, for now it seems to work with my
 
 ## Compiling 
 
-As a CRAN package, it will compile SwarmSVM by itself. But there are two
+As a CRAN package, it will compile CrushSVM by itself. But there are two
 system dependencies, the user must install themselves.
 
 
@@ -57,13 +53,13 @@ to compile and install Boost.
 ### Shark
 
 To compile Shark, download the latest source code from the Shark homepage.
-Different from the usual compilation, SwarmSVM will need Shark 
+Different from the usual compilation, CrushSVM will need Shark 
 Shark to be compiled with the -fPIC flag! For this, add
 
 > set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 
 to the top of the CMakeLists.txt file. Only then compile Shark. 
-Install it locally so that SwarmSVM (RCpp respectively) can find it.
+Install it locally so that CrushSVM (RCpp respectively) can find it.
 
 
 
@@ -75,7 +71,7 @@ Aydin Demircioglu
 
 ### Credits
 
--SwarmSVM was forked from the very old rShark project https://github.com/eddelbuettel/rshark. The whole package structure has been developed by Shane Conway and Dirk Eddelbuettel. 
+-CrushSVM was forked from the very old rShark project https://github.com/eddelbuettel/rshark. The whole package structure has been developed by Shane Conway and Dirk Eddelbuettel. 
 
 
 ### License
