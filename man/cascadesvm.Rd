@@ -4,7 +4,7 @@
 \alias{cascadesvm}
 \title{cascade SVM}
 \usage{
-cascadesvm(X, Y, k, nloops = 1, verbose = FALSE, ...)
+cascadesvm(X, Y, k, nloops = 1, train.param = NULL, verbose = FALSE, ...)
 }
 \arguments{
 \item{X}{training input}
@@ -20,5 +20,9 @@ svm models, containing: -final model (libsvm model), -?
 we do not restrict the number of subsets. in case at any point there is an uneven
 number of splits we combine all of them normally (two by two), except for the last
 three subsets. these we combine directly.
+}
+\details{
+FIXME: -stratified sampling,
+if vectors in dataset are not unique, what then?
 }
 

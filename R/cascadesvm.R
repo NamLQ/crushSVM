@@ -4,13 +4,16 @@
 #' number of splits we combine all of them normally (two by two), except for the last 
 #' three subsets. these we combine directly.
 #' 
+#' FIXME: -stratified sampling, 
+#' if vectors in dataset are not unique, what then?
+#'
 #'	@param 	X		training input
 #' @param	Y		labels
 #' @param	k		number of subsets. 
 #'
 #' @return			svm models, containing: -final model (libsvm model), -?
 #' @export
-cascadesvm = function (X, Y, k, nloops = 1, verbose = FALSE, ...) {
+cascadesvm = function (X, Y, k, nloops = 1, train.param = NULL, verbose = FALSE, ...) {
 	# sanity check
 	
 	# check for k
@@ -24,7 +27,10 @@ cascadesvm = function (X, Y, k, nloops = 1, verbose = FALSE, ...) {
 		
 		if (verbose == TRUE) cat ("LOOP ", l, "\n\n")
 		
-		# hard split of data into k subsets
+		# hard split of data into k subsets,
+		# we need stratified sampling here, if we do not do it that way
+		# we directly run into troubles. so we implicitely assume the
+		# number of elements in the smaller class is larger than k.
 		currentSplits = list()
 		perm = sample (nrow(X))
 		batchSize = floor(nrow(X)/k)
@@ -35,6 +41,13 @@ cascadesvm = function (X, Y, k, nloops = 1, verbose = FALSE, ...) {
 				upperindex = nrow(X)
 #			cat (lowerindex, upperindex,"\n")
 			currentSplits[[c]] = perm[lowerindex:upperindex]
+		}
+
+		# recheck for stratified splitting. 
+		for (s in 1:length(currentSplits)) {
+			if (length(unique(Y[currentSplits[[s]]])) == 1) {
+				stop ("Cluster with one label occured. But we applied stratified sampling! Something is wrong. Check data or code.")
+			}
 		}
 		
 		# add old data to each split
@@ -51,27 +64,34 @@ cascadesvm = function (X, Y, k, nloops = 1, verbose = FALSE, ...) {
 			# train svm on subsets
 			models = list()
 			for (m in 1:length(currentSplits)) {
-				models[[m]] = dummy (X = X[currentSplits[[m]],], 
-					Y = Y[currentSplits[[m]],],
-					C = cost,
-					gamma = gamma,
-					...
-				)
+				# need to test, if cluster only contains one single label.
+				# in this case, we DO X.
+				if (length(unique(Y[currentSplits[[m]]])) == 1) {
+					stop ("Cluster with one label occured. This can never happen, if the inital clustering did not had any. Please re-check that.")
+				} else {
+					models[[m]] = cascadetrainSVM (X = X[currentSplits[[m]],], 
+						Y = Y[currentSplits[[m]]],
+						C = cost,
+						gamma = gamma,
+						...
+					)
+				}
 			}
 
 			# join the found support vectors
 			newSplits = list()
 			for (m in seq(1, floor(length(currentSplits)/2))) {
-				# getSVs will give the indices of the support vectors relative to our subset, 
+				# localgetSVs will give the indices of the support vectors relative to our subset, 
 				# so need to convert it back 
-				indA = getSVs(models[[2*m - 1]], currentSplits[[2*m - 1]])
-				indB = getSVs(models[[2*m ]], currentSplits[[2*m]])
+				print (m)
+				indA = localgetSVs(models[[2*m - 1]], X, currentSplits[[2*m - 1]])
+				indB = localgetSVs(models[[2*m ]], X, currentSplits[[2*m]])
 				newSplits[[m]] = unique ( c( indA, indB) )
 			}
 			
 			# join last three splits if uneven
 			if ((length(currentSplits) %% 2) == 1) {
-				indA = getSVs( models[[length(currentSplits)]], currentSplits[[length(currentSplits)]])
+				indA = localgetSVs( models[[length(currentSplits)]], X, currentSplits[[length(currentSplits)]])
 				newSplits[[length(newSplits)]] = unique ( c( newSplits[[length(newSplits)]], indA ))
 			}
 
@@ -82,7 +102,7 @@ cascadesvm = function (X, Y, k, nloops = 1, verbose = FALSE, ...) {
 		}
 		
 		# finally we only have one split over
-		oldData = getSVs(models[[1]], currentSplits[[1]])
+		oldData = localgetSVs(models[[1]], X, currentSplits[[1]])
 	}
 	
 	# create results
@@ -96,12 +116,12 @@ cascadesvm = function (X, Y, k, nloops = 1, verbose = FALSE, ...) {
 
 			# TODO: warm restart
 			
-getSVs = function (model, set) {
+dummygetSVs = function (model, set) {
 	indA = set[unlist(model)]
 	return (indA)
 }
 
-dummy = function (X, Y, ...) {
+dummytrainSVM = function (X, Y, ...) {
 	n = nrow(X)
 	if (is.null(n)) stop ("ops. no data.")
 	l = floor(n/2)
@@ -109,4 +129,40 @@ dummy = function (X, Y, ...) {
 		l = n
 	r = seq(1,l)
 	return (r)
+}
+
+
+
+cascadetrainSVM = function (X, Y, verbose = FALSE,  ...) {
+
+	# need to check if svm is initialized already?
+	
+	if (verbose == TRUE) messagef("\n======= Training now")
+	trainObj =  SVMBridge::trainSVM(
+			method = solver,
+			trainDataX = X, 
+			trainDatay = Y, 
+			cost = 1, 
+			gamma = 1, 
+			epsilon = 0.01, 
+			readModelFile = TRUE,
+			verbose = verbose
+	)  
+
+	return (trainObj)
+}
+
+
+localgetSVs = function (model, data, set) {
+	# we need a reverse search :/
+	# TODO: replace witih a apply cascade. MAKE FASTER.
+	indexSet = c()
+	for (r in 1:nrow(model$model$X)) {
+		cr = which(apply(data[set,], 1, function(x,y) { all(as.numeric(x)==as.numeric(y))}, model$model$X[r,]))
+		if ((is.null(cr) == FALSE) & (length(cr) != 1)) {
+			stop ("Severe programming error. Could not find the given support vector in the original data set. OR NOT UNIQUE!")
+		}
+		indexSet = c (indexSet, set[cr])
+	}
+	return (indexSet)
 }
