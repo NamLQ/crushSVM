@@ -52,7 +52,6 @@
 #include <errno.h>
 #include "svm.h"
 #include <math.h>
-#include <string>
 #define Malloc(type,n) (type *)malloc((n)*sizeof(type))
 
 #include "llsvm.h"
@@ -60,6 +59,24 @@
 static char *line = NULL;
 static int max_line_len = 1024;
 
+
+
+
+//' Read a given file in sparse (LIBSVM) format to dense R matrix and R vector.
+//'
+//' @param              filename                the filename of the data in sparse file format. The Tilde Character isn't supported for f filename!  
+//' @param              verbose         show verbose output?
+//' @param              zeroBased       do the indices in the file start with 0, e.g. -1 0:2 1:4 ...?
+//' @keywords   IO 
+//' @note               this routine is nearly a 1:1 adoptation from the LIBSVM original code.
+//' @return             the data is read into an R matrix and an R vector, containing the data
+//'                                     and the labels. note, that these are not in sparse format, but are dense.
+//'
+//' @export
+// [[Rcpp::export]] 
+void cppdummy (int  i) {
+	i = i +1;
+}
 
 void Free(int lineCount, double *values, int *arrayCounts, int **arrayIndexes, double **arrayValues, int *targets)
 {
@@ -90,7 +107,7 @@ void Normalize(double *values, int dim, double *arrayValues, int arrayCount)
 
 
 
-void Normalize(double *values, int dim, double *arrayValues, int arrayCount, double scale)
+void NormalizeScaled(double *values, int dim, double *arrayValues, int arrayCount, double scale)
 {
     int j;
     for(j = 0; j < dim; j++) values[j] *= scale;
@@ -550,7 +567,7 @@ void trainLLSVM(const char *trainFile,
 
     printf("normalising..\n");
     if(normalize) for(i = 0; i < lineCount; i++) Normalize(values + i * dim, dim, arrayValues[i], arrayCounts[i]);
-    else for(i = 0; i < lineCount; i++) Normalize(values + i * dim, dim, arrayValues[i], arrayCounts[i], scale);
+	else for(i = 0; i < lineCount; i++) NormalizeScaled(values + i * dim, dim, arrayValues[i], arrayCounts[i], scale);
 
     double *means = new double[dim * kmeansClusters];
     double *coorWeights = new double[lineCount * kNN];
@@ -644,7 +661,7 @@ void predictLLSVM(const char *testFile,
     int correct = 0;
     for(i = 0; i < lineCount; i++)
     {
-        Normalize(values + i * dim, dim, arrayValues[i], arrayCounts[i], llsvm_model->scale);
+        NormalizeScaled(values + i * dim, dim, arrayValues[i], arrayCounts[i], llsvm_model->scale);
         int bestIndex = 0;
         double bestResp = 0;
 

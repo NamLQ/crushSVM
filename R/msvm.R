@@ -18,7 +18,7 @@ multiplikative.dist.fun = function (gamma = 1.0) {
 
 #' @param	dist.fun 		this is a function to convert dissimilarities to similarities 
 
-svmknn.train = function (kerneldist.fun = (), svm.parameter = ... ) {
+svmknn.train = function (kerneldist.fun = NULL, svm.parameter = NULL, ... ) {
 	# save training examples
 	
 	# add distance function to object

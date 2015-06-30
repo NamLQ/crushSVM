@@ -70,7 +70,7 @@ void exit_with_help()
 }
 
 
-
+/*
 int main(int argc, char **argv)
 {
     FILE *input, *output;
@@ -122,4 +122,4 @@ int main(int argc, char **argv)
 }
 
 
-
+*/

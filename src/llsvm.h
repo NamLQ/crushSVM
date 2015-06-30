@@ -56,7 +56,6 @@
 #include <errno.h>
 #include "svm.h"
 #include <math.h>
-#include <string>
 #define Malloc(type,n) (type *)malloc((n)*sizeof(type))
 
 
@@ -78,7 +77,7 @@ struct LLSVMModel
 
 void Free(int lineCount, double *values, int *arrayCounts, int **arrayIndexes, double **arrayValues, int *targets);
 void Normalize(double *values, int dim, double *arrayValues, int arrayCount);
-void Normalize(double *values, int dim, double *arrayValues, int arrayCount, double scale);
+void NormalizeScaled(double *values, int dim, double *arrayValues, int arrayCount, double scale);
 void GetKNN(double *means, int dim, int clusters, double *arrayValues, int *arrayIndexes, int arrayCount, int kNN, int *coorIndexes, double *coorDistances);
 void GetDistances(double *means, int dim, int clusters, double *arrayValues, int *arrayIndexes, int arrayCount, int kNN, int *coorIndexes, double *coorDistances);
 void LeastSquares(double *means, int *indexes, int dim, int kNN, int *delta, double *arrayValues, int *arrayIndexes, int arrayCount, double *coef);
@@ -91,7 +90,7 @@ int MyRand();
 void KMeansClustering(double *means, int clusters, double *values, int lineCount, int dim, int iterations);
 int Load(const char *fileName, double **values, int **arrayCounts, int ***arrayIndexes, double ***arrayValues, int **targets, int *labels, int *dimensions, int maxIndex);
 struct LLSVMModel *LoadModel(const char *fileName);
-int LLSVMSaveModel(const char *model_file_name, const LLSVMModel *model);
+int LLSVMSaveModel(const char *model_file_name, const struct LLSVMModel *model);
 void trainLLSVM(const char *trainFile,
                 const char *modelFile,
                const double scale, 

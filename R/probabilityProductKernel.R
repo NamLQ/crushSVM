@@ -1,8 +1,8 @@
-## SwarmSVM -- A collection of SVM solver.
+## crushSVM -- A collection of SVM solver.
 ##
 ## Copyright (C) 2015 Aydin Demircioglu <aydin.demircioglu@ini.rub.de>
 ##
-## This file is part of the SwarmSVM library for GNU R.
+## This file is part of the crushSVM library for GNU R.
 ## It is made available under the terms of the GNU General Public
 ## License, version 2, or at your option, any later version,
 ## incorporated herein by reference.

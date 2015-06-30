@@ -52,29 +52,28 @@
 #include <errno.h>
 #include "svm.h"
 #include <math.h>
-#include <string>
 #define Malloc(type,n) (type *)malloc((n)*sizeof(type))
 
 #include "llsvm.h"
 
-void print_null(const char *s) {}
-
-
-void exit_with_help()
-{
-	printf(
-	"Usage: svm-train [options] training_set_file [model_file]\n"
-	"options:\n"
-    "-s scale (default 1.0)\n"
-    "-k kMeans per Label (default 10)\n"
-    "-n neighborhood size for kNN (default 20)\n"
-    "-i svm iterations (default 500)\n"
-    "-d distance coefficient (default 0.1)\n"
-    "-j joint clustering on/off (default 0 = off)\n"
-	"-q : quiet mode (no outputs)\n"
-	);
-	exit(1);
-}
+// void print_null(const char *s) {}
+// 
+// 
+// void exit_with_help()
+// {
+// 	printf(
+// 	"Usage: svm-train [options] training_set_file [model_file]\n"
+// 	"options:\n"
+//     "-s scale (default 1.0)\n"
+//     "-k kMeans per Label (default 10)\n"
+//     "-n neighborhood size for kNN (default 20)\n"
+//     "-i svm iterations (default 500)\n"
+//     "-d distance coefficient (default 0.1)\n"
+//     "-j joint clustering on/off (default 0 = off)\n"
+// 	"-q : quiet mode (no outputs)\n"
+// 	);
+// 	exit(1);
+// }
 
 void exit_input_error(int line_num)
 {
@@ -182,7 +181,7 @@ void parse_command_line(int argc, char **argv, char *input_file_name, char *mode
 }
 
 
-
+/*
 
 int main(int argc, char **argv)
 {
@@ -190,7 +189,7 @@ int main(int argc, char **argv)
     char model_file_name[1024];
 
     parse_command_line(argc, argv, input_file_name, model_file_name);
-    /*
+
     // TODO in distant future
     const char *error_msg;
     error_msg = llsvm_check_parameter(&prob,&param);
@@ -200,7 +199,7 @@ int main(int argc, char **argv)
         fprintf(stderr,"ERROR: %s\n",error_msg);
         exit(1);
     }
-*/
+
     // llsvm will save its model by itself
     trainLLSVM (input_file_name, 
                 model_file_name,
@@ -215,4 +214,4 @@ int main(int argc, char **argv)
     free(line);
 
     return 0;
-}
+}*/

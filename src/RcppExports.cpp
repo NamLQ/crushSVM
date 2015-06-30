@@ -6,52 +6,13 @@
 
 using namespace Rcpp;
 
-// loss
-/// \brief Constructor 		/// 		/// \param  kernel          kernel function to use for training and prediction 		/// \param loss(sub-)differentiable loss function 		/// \param  C               regularization parameter - always the 'true' value of C, even when unconstrained is set 		/// \param  offset          whether to train with offset/bias parameter or not 		/// \param  unconstrained   when a C-value is given via setParameter, should it be piped through the exp-function before using it in the solver? 		/// \param  cacheSize       size of the cache 		KernelSGDTrainer(KernelType* kernel, const LossType* loss, double C, bool offset, bool unconstrained, size_t cacheSize);
-RcppExport SEXP swarmsvm_loss(SEXP kernelSEXP, SEXP lossSEXP, SEXP CSEXP, SEXP offsetSEXP, SEXP unconstrainedSEXP, SEXP cacheSizeSEXP) {
+// cppdummy
+void cppdummy(int i);
+RcppExport SEXP crushSVM_cppdummy(SEXP iSEXP) {
 BEGIN_RCPP
-    Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< sub-)differentiable loss function 		/// \param  C               regularization parameter - always the 'true' value of C, even when unconstrained is set 		/// \param  offset          whether to train with offset/bias parameter or not 		/// \param  unconstrained   when a C-value is given via setParameter, should it be piped through the exp-function before using it in the solver? 		/// \param  cacheSize       size of the cache 		KernelSGDTrainer(KernelType* >::type kernel(kernelSEXP);
-    Rcpp::traits::input_parameter< const LossType* >::type loss(lossSEXP);
-    Rcpp::traits::input_parameter< double >::type C(CSEXP);
-    Rcpp::traits::input_parameter< bool >::type offset(offsetSEXP);
-    Rcpp::traits::input_parameter< bool >::type unconstrained(unconstrainedSEXP);
-    Rcpp::traits::input_parameter< size_t >::type cacheSize(cacheSizeSEXP);
-    __result = Rcpp::wrap(loss(kernel, loss, C, offset, unconstrained, cacheSize));
-    return __result;
-END_RCPP
-}
-// rcpparma_outerproduct
-arma::mat rcpparma_outerproduct(const arma::colvec& x);
-RcppExport SEXP swarmsvm_rcpparma_outerproduct(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< const arma::colvec& >::type x(xSEXP);
-    __result = Rcpp::wrap(rcpparma_outerproduct(x));
-    return __result;
-END_RCPP
-}
-// rcpparma_innerproduct
-double rcpparma_innerproduct(const arma::colvec& x);
-RcppExport SEXP swarmsvm_rcpparma_innerproduct(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< const arma::colvec& >::type x(xSEXP);
-    __result = Rcpp::wrap(rcpparma_innerproduct(x));
-    return __result;
-END_RCPP
-}
-// rcpparma_bothproducts
-Rcpp::List rcpparma_bothproducts(const arma::colvec& x);
-RcppExport SEXP swarmsvm_rcpparma_bothproducts(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< const arma::colvec& >::type x(xSEXP);
-    __result = Rcpp::wrap(rcpparma_bothproducts(x));
-    return __result;
+    Rcpp::traits::input_parameter< int >::type i(iSEXP);
+    cppdummy(i);
+    return R_NilValue;
 END_RCPP
 }
