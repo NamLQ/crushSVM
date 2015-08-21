@@ -1,11 +1,19 @@
 Package: crushSVM
 Type: Package
-Title: What the package does (short line)
-Version: 1.0
-Date: 2015-05-11
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
-Imports: Rcpp (>= 0.11.6)
-LinkingTo: Rcpp, RcppArmadillo
+Title: A Collection of SVM Ensemble Algorithms.
+Version: 0.1
+Date: 2015-09-11
+Author: Aydin Demircioglu
+Maintainer: Aydin Demircioglu <aydin.demircioglu@ini.rub.de>
+Description: SVMs can be regarded as the best classifiers out there. To improve them and .make them more applicable, ensemble methods have been combined with SVMs as base learners. Several of these methods can be found in crushSVM.
+Copyright: Aydin Demircioglu
+License: GPL (>= 2)
+Imports: Rcpp (>= 0.11.6),
+    checkmate (>= 1.5.1),
+    lasvmR 
+LinkingTo: Rcpp
+Suggests: knitr,
+    testthat
+VignetteBuilder: knitr
+URL: http://github.com/aydindemircioglu/crushSVM
+BugReports: http://github.com/aydindemircioglu/crushSVM/issues

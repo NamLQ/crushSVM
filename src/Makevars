@@ -1,0 +1,29 @@
+
+
+PKG_CXXFLAGS=@CXXFLAGS@ -I. 
+PKG_LIBS=@LDFLAGS@ 
+
+R_INC = /usr/share/R/include
+RCPP_INC = $(R_HOME)/library/Rcpp/include
+
+
+CXX ?= g++
+CC ?= gcc
+CFLAGS = -Wall -Wconversion -O3 -fPIC
+LIBS = acfcd/blas/blas.a
+SHVER = 1
+OS = $(shell uname)
+DIRS = acfcd
+
+
+all: recursive
+	$(MAKE) -C acfcd
+	$(MAKE) -C llsvm
+
+recursive: 
+	true
+	
+clean :
+	-for d in $(DIRS); do (cd $$d; $(MAKE) clean ); done
+
+	

@@ -51,34 +51,18 @@
 #include <ctype.h>
 #include <errno.h>
 #include "svm.h"
+#include <Rcpp.h"
 #include <math.h>
 #define Malloc(type,n) (type *)malloc((n)*sizeof(type))
 
 #include "llsvm.h"
 
-// void print_null(const char *s) {}
-// 
-// 
-// void exit_with_help()
-// {
-// 	printf(
-// 	"Usage: svm-train [options] training_set_file [model_file]\n"
-// 	"options:\n"
-//     "-s scale (default 1.0)\n"
-//     "-k kMeans per Label (default 10)\n"
-//     "-n neighborhood size for kNN (default 20)\n"
-//     "-i svm iterations (default 500)\n"
-//     "-d distance coefficient (default 0.1)\n"
-//     "-j joint clustering on/off (default 0 = off)\n"
-// 	"-q : quiet mode (no outputs)\n"
-// 	);
-// 	exit(1);
-// }
+
 
 void exit_input_error(int line_num)
 {
 	fprintf(stderr,"Wrong input format at line %d\n", line_num);
-	exit(1);
+	Rcpp::stop("Input error.");
 }
 
 void parse_command_line(int argc, char **argv, char *input_file_name, char *model_file_name);
@@ -123,7 +107,7 @@ void parse_command_line(int argc, char **argv, char *input_file_name, char *mode
 	{
 		if(argv[i][0] != '-') break;
 		if(++i>=argc)
-			exit_with_help();
+			Rcpp::stop("Argument error.");
 		switch(argv[i-1][1])
 		{
 			case 's':
@@ -154,7 +138,7 @@ void parse_command_line(int argc, char **argv, char *input_file_name, char *mode
                     break;
 			default:
 				fprintf(stderr,"Unknown option: -%c\n", argv[i-1][1]);
-				exit_with_help();
+				Rcpp::stop("Some error.");
 		}
 	}
 
@@ -163,7 +147,7 @@ void parse_command_line(int argc, char **argv, char *input_file_name, char *mode
 	// determine filenames
 
 	if(i>=argc)
-		exit_with_help();
+		Rcpp::stop("Too many error.");
 
 	strcpy(input_file_name, argv[i]);
 

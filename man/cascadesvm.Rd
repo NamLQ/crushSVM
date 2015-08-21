@@ -4,14 +4,16 @@
 \alias{cascadesvm}
 \title{cascade SVM}
 \usage{
-cascadesvm(X, Y, k, nloops = 1, train.param = NULL, verbose = FALSE, ...)
+cascadesvm(X, Y, k, epochs = 1, train.param = NULL, verbose = FALSE, ...)
 }
 \arguments{
 \item{X}{training input}
 
 \item{Y}{labels}
 
-\item{k}{number of subsets.}
+\item{k}{number of initial subsets.}
+
+\item{epochs}{number of epochs to run}
 }
 \value{
 svm models, containing: -final model (libsvm model), -?
@@ -23,6 +25,5 @@ three subsets. these we combine directly.
 }
 \details{
 FIXME: -stratified sampling,
-if vectors in dataset are not unique, what then?
 }
 

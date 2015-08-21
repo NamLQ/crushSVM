@@ -5,16 +5,19 @@
 #' three subsets. these we combine directly.
 #' 
 #' FIXME: -stratified sampling, 
-#' if vectors in dataset are not unique, what then?
+#' 
 #'
 #'	@param 	X		training input
 #' @param	Y		labels
-#' @param	k		number of subsets. 
+#' @param	k		number of initial subsets. 
+#' @param	epochs 	number of epochs to run
 #'
 #' @return			svm models, containing: -final model (libsvm model), -?
 #' @export
-cascadesvm = function (X, Y, k, nloops = 1, train.param = NULL, verbose = FALSE, ...) {
+cascadesvm = function (X, Y, k, epochs  = 1, train.param = NULL, verbose = FALSE, ...) {
 	# sanity check
+	checkmate::assertInt(k, na.ok = FALSE, lower = 2, upper = floor(nrow(X)/2))
+	checkmate::assertInt(epochs, na.ok = FALSE, lower = 1)
 	
 	# check for k
 	depth = as.integer(log2(k))
@@ -23,7 +26,7 @@ cascadesvm = function (X, Y, k, nloops = 1, train.param = NULL, verbose = FALSE,
 	oldData = c()
 	
 	# start cascade
-	for (l in 1:nloops) {
+	for (l in 1:epochs) {
 		
 		if (verbose == TRUE) cat ("LOOP ", l, "\n\n")
 		
@@ -79,11 +82,11 @@ cascadesvm = function (X, Y, k, nloops = 1, train.param = NULL, verbose = FALSE,
 			}
 
 			# join the found support vectors
+			if (verbose == TRUE) cat ("Joining Support Vectors.\n")
 			newSplits = list()
 			for (m in seq(1, floor(length(currentSplits)/2))) {
 				# localgetSVs will give the indices of the support vectors relative to our subset, 
 				# so need to convert it back 
-				print (m)
 				indA = localgetSVs(models[[2*m - 1]], X, currentSplits[[2*m - 1]])
 				indB = localgetSVs(models[[2*m ]], X, currentSplits[[2*m]])
 				newSplits[[m]] = unique ( c( indA, indB) )
@@ -95,8 +98,8 @@ cascadesvm = function (X, Y, k, nloops = 1, train.param = NULL, verbose = FALSE,
 				newSplits[[length(newSplits)]] = unique ( c( newSplits[[length(newSplits)]], indA ))
 			}
 
-			print ("new splits")
-			print (newSplits)
+			if (verbose == TRUE) print ("new splits")
+			if (verbose == TRUE) print (newSplits)
 			# update splits for next level
 			currentSplits = newSplits
 		}
@@ -107,6 +110,7 @@ cascadesvm = function (X, Y, k, nloops = 1, train.param = NULL, verbose = FALSE,
 	
 	# create results
 	result = BBmisc::makeS3Obj (	"crushSVM.cascadesvm",
+		model = models[[1]],
 		k = k
 	)
 
@@ -136,6 +140,28 @@ dummytrainSVM = function (X, Y, ...) {
 cascadetrainSVM = function (X, Y, verbose = FALSE,  ...) {
 
 	# need to check if svm is initialized already?
+	# use e1071
+	
+	if (verbose == TRUE) messagef("\n======= Training now")
+	trainObj =  SVMBridge::trainSVM(
+			method = solver,
+			trainDataX = X, 
+			trainDatay = Y, 
+			cost = 1, 
+			gamma = 1, 
+			epsilon = 0.01, 
+			readModelFile = TRUE,
+			verbose = verbose
+	)  
+
+	return (trainObj)
+}
+
+
+
+cascadetrainSVMORg = function (X, Y, verbose = FALSE,  ...) {
+
+	# need to check if svm is initialized already?
 	
 	if (verbose == TRUE) messagef("\n======= Training now")
 	trainObj =  SVMBridge::trainSVM(
@@ -159,10 +185,40 @@ localgetSVs = function (model, data, set) {
 	indexSet = c()
 	for (r in 1:nrow(model$model$X)) {
 		cr = which(apply(data[set,], 1, function(x,y) { all(as.numeric(x)==as.numeric(y))}, model$model$X[r,]))
-		if ((is.null(cr) == FALSE) & (length(cr) != 1)) {
-			stop ("Severe programming error. Could not find the given support vector in the original data set. OR NOT UNIQUE!")
+		if (is.null(cr) == TRUE) {
+			stop ("Severe programming error. Could not find the given support vector in the original data set. Received NULL")
+		} 
+		if (length(cr) > 1) {
+			# not unique, we take the first
+			cr = cr[1] 
+		} 
+		if (length(cr) == 0) {
+			stop ("Severe programming error. Could not find the given support vector in the original data set.")
 		}
 		indexSet = c (indexSet, set[cr])
 	}
 	return (indexSet)
 }
+
+
+
+rowsUnique = function (data) {
+	# we need a reverse search :/
+	# TODO: replace witih a apply cascade. MAKE FASTER.
+	for (r in 1:nrow(data)) {
+		cr = which(apply(data, 1, function(x,y) { all(as.numeric(x)==as.numeric(y))}, data[r,]))
+		if (is.null(cr) == TRUE) {
+			stop ("Severe programming error. Could not find the given support vector in the original data set. Received NULL")
+		} 
+		if (length(cr) > 1) {
+			# not unique, we take the first
+			cr = cr[1] 
+		} 
+		if (length(cr) == 0) {
+			stop ("Severe programming error. Could not find the given support vector in the original data set.")
+		}
+	}
+	return (0)
+}
+
+
